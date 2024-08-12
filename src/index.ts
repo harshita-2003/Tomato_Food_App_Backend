@@ -6,6 +6,7 @@ import myUserRoute from "./routes/MyUserRoute"
 import { v2 as cloudinary } from "cloudinary"
 import myRestaurantRoute from "./routes/MyRestaurantRoute"
 import restaurantRoute from "./routes/RestaurantRoute";
+import orderRoute from "./routes/OrderRoute"
 
 mongoose
   .connect(process.env.MONGODB_CONNECTION_STRING as string)
@@ -19,15 +20,11 @@ cloudinary.config({
 })
     
 const app = express()
-app.use(express.json())
-// app.use(cors())
-app.use(cors({
-  origin: 'http://localhost:5173', // Adjust this as needed
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-}));
+app.use(cors())
 
+//for security and verification
+app.use("/api/order/checkout/webhook" , express.raw({ type: "*/*" }))
+app.use(express.json())
   
 // Middleware to log all incoming requests
 app.use((req, res, next) => {
@@ -42,6 +39,7 @@ app.get("/check" , async(req: Request, res: Response) => {
 app.use("/api/my/user" , myUserRoute)
 app.use("/api/my/restaurant" , myRestaurantRoute)
 app.use("/api/restaurant" , restaurantRoute)
+app.use("/api/order" , orderRoute)
 
 app.get("/test" , async (req,res) => {
   res.json({ message : "Hello world" });

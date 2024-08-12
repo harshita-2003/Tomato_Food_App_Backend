@@ -1,4 +1,4 @@
-import { query, Request, Response } from "express";
+import { Request, Response } from "express";
 import Restaurant from "../models/restaurant";
 
 const searchRestaurants = async (req: Request, res: Response) => {
@@ -59,12 +59,12 @@ const searchRestaurants = async (req: Request, res: Response) => {
     const total = await Restaurant.countDocuments(query);
 
     const response  = {
-        data : restaurants,
-        pagination : {
-            total,
-            page,
-            pages : Math.ceil(total / pageSize) // total = 50 , pagesize = 10 > pages = 5
-        }
+      data : restaurants,
+      pagination : {
+          total,
+          page,
+          pages : Math.ceil(total / pageSize) // total = 50 , pagesize = 10 > pages = 5
+      }
     }
 
     res.json(response);
@@ -75,6 +75,23 @@ const searchRestaurants = async (req: Request, res: Response) => {
   }
 };
 
+const getRestaurantbyId = async (req: Request, res: Response) => {
+  try {
+    const restaurantId = req.params.restaurantId;
+    const getRestaurant = await Restaurant.findById(restaurantId);
+
+    if(!getRestaurant) {
+      res.status(404).json({message: "restaurant not found"})
+    }
+
+    res.json(getRestaurant);
+  } catch (error) {
+    console.log("error in search", error);
+    res.status(500).json({ message: "something went wrong" });
+  }
+}
+
 export default {
   searchRestaurants,
+  getRestaurantbyId,
 };

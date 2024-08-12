@@ -5,6 +5,11 @@ import RestaurantController from "../controllers/RestaurantController";
 const router = express.Router();
 
 router.get(
+    "/:restaurantId",
+    RestaurantController.getRestaurantbyId,
+)
+
+router.get(
     "/search/:city", 
     validateMySearchCity,
     RestaurantController.searchRestaurants,
